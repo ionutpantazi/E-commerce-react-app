@@ -1,6 +1,5 @@
 import React from "react";
 import firebase from "firebase/app";
-import LoginPage from "./componente/LoginComponents/LoginPage";
 import Authenticated from "./componente/LoginComponents/Authenticated";
 import AdminPage from "./componente/LoginComponents/AdminPage";
 import "firebase/auth";
@@ -13,7 +12,6 @@ import {
 import { config } from "./config";
 import './App.css';
 
-
 class App extends React.Component {
   render() {
     return (
@@ -23,7 +21,7 @@ class App extends React.Component {
             if (isSignedIn === false) {
               return (
                 <div>
-                  <LoginPage />
+                  <Authenticated user={"true"} />
                 </div>
               )
             }

@@ -4,7 +4,9 @@ import Produse from "./ListaDeProduse"
 import Cos from "./Cos"
 import Numar from "./NumarCos";
 import Filtru from "./Filtru";
-import { Drawer, message, Layout, Button , Popover } from 'antd';
+import Register from "../LoginComponents/Register";
+import Login from "../LoginComponents/Login";
+import { Drawer, message, Layout, Button, Popover, Row, Col, Tabs } from 'antd';
 import "antd/dist/antd.css";
 import { createFromIconfontCN } from '@ant-design/icons';
 import './EcommerceApp.css';
@@ -24,7 +26,6 @@ class EcommerceApp extends React.Component {
   componentWillMount() {
     this.setState({ produse: this.props.bazaDate });
     this.produseRezultate()
-
   }
 
   mesajEroare1 = () => {
@@ -32,7 +33,7 @@ class EcommerceApp extends React.Component {
   }
 
   handleSterge = (produs) => {
-    const a = this.state.cosProduse.filter(a => a.id !== produs.id)
+    const a = this.state.cosProduse.filter(a => a.nume !== produs.nume)
     this.setState({ cosProduse: a });
   }
 
@@ -41,7 +42,7 @@ class EcommerceApp extends React.Component {
     const a = this.state.cosProduse
     let dejaAdaugat = false
     a.forEach(b => {
-      if (b.id === produs.id) {
+      if (b.nume === produs.nume) {
         dejaAdaugat = true;
         this.mesajEroare1()
       }
@@ -67,7 +68,7 @@ class EcommerceApp extends React.Component {
   handlePlus = (produs) => {
     const a = this.state.cosProduse
     a.forEach(cp => {
-      if (cp.id === produs.id) {
+      if (cp.nume === produs.nume) {
         cp.totalProduse += 1
       }
     })
@@ -77,7 +78,7 @@ class EcommerceApp extends React.Component {
   handleMinus = (produs) => {
     const a = this.state.cosProduse
     a.forEach(x => {
-      if (x.id === produs.id) {
+      if (x.nume === produs.nume) {
         x.totalProduse -= 1
         if (x.totalProduse <= 0) {
           x.totalProduse = 1
@@ -113,11 +114,35 @@ class EcommerceApp extends React.Component {
   };
 
   render() {
-    const content = (
-    <div style={{padding:10}}>
-      <b>Welcome {this.props.user}</b><br /><br /><br /><br />
-      <Button type='primary' onClick={() => { firebase.auth().signOut() }}>Sign out</Button>
-    </div>
+    function callback(key) {
+    }
+    const { TabPane } = Tabs;
+    var loggedIn = this.props.user
+    var content = (
+      <div>
+        {loggedIn === "true" &&
+          <div style={{ maxWidth: '300px' }}>
+            <Row justify="space-around" align="middle">
+              <Col xs={{ span: 16 }} lg={{ span: 6 }}>
+                <Tabs defaultActiveKey="1" onChange={callback}>
+                  <TabPane tab="Login" key="1">
+                    <Login />
+                  </TabPane>
+                  <TabPane tab="Register" key="2">
+                    <Register />
+                  </TabPane>
+                </Tabs>
+              </Col>
+            </Row>
+          </div>
+        }
+        {loggedIn !== "true" &&
+          <div style={{ padding: 10 }}>
+            <b>Welcome {this.props.user}</b><br /><br /><br /><br />
+            <Button type='primary' onClick={() => { firebase.auth().signOut() }}>Sign out</Button>
+          </div>
+        }
+      </div>
     )
     const IconFont = createFromIconfontCN({
       scriptUrl: '//at.alicdn.com/t/font_1697557_t92s5qj61g.js',
@@ -130,7 +155,7 @@ class EcommerceApp extends React.Component {
           <span onClick={this.showDrawer}>
             <Numar cosProduse={this.state.cosProduse} />
           </span>
-          <span style={{marginLeft:20}}>
+          <span style={{ marginLeft: 20 }}>
             <Popover content={content} placement="bottomLeft" trigger="click">
               <IconFont type="icon-tab_login" style={{ fontSize: '28px' }} />
             </Popover>

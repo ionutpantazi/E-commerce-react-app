@@ -72,7 +72,7 @@ class Produse extends React.Component {
               </div>
             </div>
           </Layout>
-          <Footer style={{ backgroundColor: "white", height: "80px", textAlign: "center" }}>
+          <Footer style={{ backgroundColor: "white", height: "110px", textAlign: "center" }}>
             <span>Rating:{' '}<Rate disabled value={modalRating} /></span><br />
             <span>Data adaugata: {modalData}</span>
           </Footer>

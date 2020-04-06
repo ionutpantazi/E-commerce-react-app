@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import firebase from "firebase/app";
+import firebase from '@firebase/app'
+import '@firebase/storage';
 import {
   FirebaseDatabaseMutation,
   FirebaseDatabaseProvider,
   FirebaseDatabaseNode,
 } from "@react-firebase/database";
 import { config } from "../../config";
-import { Form, Button, Input, Comment, Row, Col, Modal } from 'antd';
+import { Form, Button, Input, Comment, Row, Modal, Col } from 'antd';
 import moment from 'moment';
 
-
+firebase.initializeApp(config)
 var storageRef = firebase.storage().ref('images/')
 
 class AdminPage extends React.Component {
@@ -40,7 +41,6 @@ class AdminPage extends React.Component {
   };
 
   handleOk = e => {
-    console.log(e);
     this.setState({
       visible: false,
       mesaj: '',
@@ -49,7 +49,6 @@ class AdminPage extends React.Component {
   };
 
   handleCancel = e => {
-    console.log(e);
     this.setState({
       visible: false,
     });
@@ -67,9 +66,8 @@ class AdminPage extends React.Component {
         <FirebaseDatabaseMutation type="push" path="e-commerce/">
           {({ runMutation }) => {
             return (
-              <Form form={form}>
+              <Form form={form} style={{padding:20}}>
                 <Form.Item
-                  label="Product name"
                   name="nume"
                   rules={[
                     {
@@ -77,10 +75,9 @@ class AdminPage extends React.Component {
                     },
                   ]}
                 >
-                  <TextArea autoSize={{ minRows: 1 }} />
+                  <TextArea autoSize={{ minRows: 1 }} placeholder="Product name" />
                 </Form.Item>
                 <Form.Item
-                  label="Product price"
                   name="pret"
                   rules={[
                     {
@@ -88,10 +85,9 @@ class AdminPage extends React.Component {
                     },
                   ]}
                 >
-                  <TextArea autoSize={{ minRows: 1 }} />
+                  <TextArea autoSize={{ minRows: 1 }} placeholder="Product price (number)" />
                 </Form.Item>
                 <Form.Item
-                  label="Product description"
                   name="descriere"
                   rules={[
                     {
@@ -99,10 +95,9 @@ class AdminPage extends React.Component {
                     },
                   ]}
                 >
-                  <TextArea autoSize={{ minRows: 1 }} />
+                  <TextArea autoSize={{ minRows: 1 }} placeholder="Product description (max 200 letters)" />
                 </Form.Item>
                 <Form.Item
-                  label="Product rating"
                   name="rating"
                   rules={[
                     {
@@ -110,43 +105,54 @@ class AdminPage extends React.Component {
                     },
                   ]}
                 >
-                  <TextArea autoSize={{ minRows: 1 }} />
+                  <TextArea autoSize={{ minRows: 1 }} placeholder="Product rating (number from 1 to 5)" />
                 </Form.Item>
-                <Form.Item shouldUpdate>
-                  {() => (
-                    <Button
-                      style={{ float: 'right' }}
-                      type="primary"
-                      htmlType="submit"
-                      onClick={async () => {
-                        const values = await form.validateFields();
-                        console.log(values)
-                        runMutation({
-                          nume: values.nume,
-                          pret: values.pret,
-                          imagine: this.state.mesaj,
-                          descriere: values.descriere,
-                          rating: values.rating,
-                          data: moment(new Date()).format("LLLL")
-                        })
-                        form.resetFields();
-                      }}
-                      disabled={
-                        !form.isFieldsTouched(true) ||
-                        form.getFieldsError().filter(({ errors }) => errors.length).length
-                      }
-                    >
-                      Create collection
-                    </Button>
-                  )}
-                </Form.Item>
+                <Row justify="space-around" align="middle">
+                  <Col>
+                    <Form.Item shouldUpdate>
+                      {() => (
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          onClick={async () => {
+                            const values = await form.validateFields();
+                            runMutation({
+                              nume: values.nume,
+                              pret: values.pret,
+                              imagine: this.state.mesaj,
+                              descriere: values.descriere,
+                              rating: values.rating,
+                              data: moment(new Date()).format("LLLL")
+                            })
+                            form.resetFields();
+                            this.handleOk()
+                          }}
+                          disabled={
+                            !form.isFieldsTouched(true) ||
+                            form.getFieldsError().filter(({ errors }) => errors.length).length
+                          }
+                        >
+                          Create collection
+                        </Button>
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <Form.Item>
+                      <Button
+                        onClick={this.handleCancel}
+                      >
+                        Cancel
+                  </Button>
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Form>
             )
           }}
         </FirebaseDatabaseMutation>
       )
     }
-    console.log(this.state)
     const { TextArea } = Input;
     return (
       <div style={{ margin: 50 }}>
@@ -154,7 +160,7 @@ class AdminPage extends React.Component {
         <Button type='primary' style={{ float: "right" }} onClick={() => { firebase.auth().signOut() }}>Sign out</Button>
         <br /><br /><span>Database product list:</span><br />
         <FirebaseDatabaseProvider firebase={firebase} {...config}>
-          <Row style={{borderStyle:"solid",borderWidth:1}}>
+          <Row style={{ borderStyle: "solid", borderWidth: 1, padding: 10 }}>
             <FirebaseDatabaseNode path="e-commerce/">
               {data => {
                 const { value } = data;
@@ -167,7 +173,6 @@ class AdminPage extends React.Component {
                   />
                 ));
               }}
-
             </FirebaseDatabaseNode>
           </Row>
           <br />
@@ -191,7 +196,8 @@ class AdminPage extends React.Component {
             Add product description
           </Button>
           <Modal
-            title="Basic Modal"
+            closable={false}
+            footer={null}
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
