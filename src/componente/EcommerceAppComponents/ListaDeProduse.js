@@ -38,17 +38,17 @@ class Produse extends React.Component {
             />
           }
           actions={[
-            <Tooltip title="adauga in cos" trigger="hover , click">
+            <Tooltip title="Add to cart" trigger="hover , click">
               <div className="responsive"><IconFont type="icon-iconaddtocart" onClick={() => this.props.handleAdauga(produs)} /></div>
             </Tooltip>,
-            <Tooltip title="detalii" trigger="hover , click">
+            <Tooltip title="Details" trigger="hover , click">
               <div className="responsive"><IconFont type="icon-tariffdetails" onClick={() => this.showModal(produs)} /></div>
             </Tooltip>
           ]}
         >
           <Meta
             title={produs.nume}
-            description={produs.pret + ' lei/kg'}
+            description={produs.pret + ' $'}
           />
         </Card>
       </Col>
@@ -74,7 +74,7 @@ class Produse extends React.Component {
           </Layout>
           <Footer style={{ backgroundColor: "white", height: "110px", textAlign: "center" }}>
             <span>Rating:{' '}<Rate disabled value={modalRating} /></span><br />
-            <span>Data adaugata: {modalData}</span>
+            <span>Added on: {modalData}</span>
           </Footer>
         </Modal>
       </div>

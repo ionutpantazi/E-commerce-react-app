@@ -11,7 +11,7 @@ class Cos extends React.Component {
         {cosProduse.length === 0 &&
           <Empty
             description={
-              <span>Cosul de cumparaturi este gol</span>
+              <span>Basket is empty</span>
             }
           />
         }
@@ -31,8 +31,8 @@ class Cos extends React.Component {
                   title={item.nume}
                   description={
                     <div>
-                      Pret: {(Math.round(item.pret * item.totalProduse * 100) / 100).toFixed(2)} lei<br />
-                      Cantitate : {item.totalProduse}
+                      Price: {(Math.round(item.pret * item.totalProduse * 100) / 100).toFixed(2)} $<br />
+                      Quantity : {item.totalProduse}
                     </div>
                   }
                 />

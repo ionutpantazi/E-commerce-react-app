@@ -63,4 +63,7 @@
     font-size: 30px;
   }
 
-  .ant-popover{position:fixed;}
+  .ant-popover{
+    position:fixed;
+    z-index: 3;
+  }

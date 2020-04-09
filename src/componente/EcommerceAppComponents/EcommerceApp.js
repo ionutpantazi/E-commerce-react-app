@@ -6,10 +6,12 @@ import Numar from "./NumarCos";
 import Filtru from "./Filtru";
 import Register from "../LoginComponents/Register";
 import Login from "../LoginComponents/Login";
-import { Drawer, message, Layout, Button, Popover, Row, Col, Tabs } from 'antd';
+import ModalContent from "./ModalContent";
+import { Drawer, message, Layout, Button, Popover, Row, Col, Tabs, Modal } from 'antd';
 import "antd/dist/antd.css";
 import { createFromIconfontCN } from '@ant-design/icons';
 import './EcommerceApp.css';
+import moment from 'moment';
 
 class EcommerceApp extends React.Component {
   constructor() {
@@ -19,17 +21,14 @@ class EcommerceApp extends React.Component {
       produse: [],
       visible: false,
       sortat: "nume",
-      produseRezultate: []
+      produseRezultate: [],
+      modalVisible: false
     }
   }
 
   componentWillMount() {
     this.setState({ produse: this.props.bazaDate });
     this.produseRezultate()
-  }
-
-  mesajEroare1 = () => {
-    message.error('Acest produs a fost deja adaugat');
   }
 
   handleSterge = (produs) => {
@@ -44,7 +43,7 @@ class EcommerceApp extends React.Component {
     a.forEach(b => {
       if (b.nume === produs.nume) {
         dejaAdaugat = true;
-        this.mesajEroare1()
+        message.warning('Item already added to cart');
       }
     })
     if (!dejaAdaugat) {
@@ -89,8 +88,20 @@ class EcommerceApp extends React.Component {
   }
 
   handlePlateste = () => {
-    this.setState({ cosProduse: [] });
-    alert("cumparat")
+    if (this.props.user !== "true") {
+      var name = this.props.user.substring(0, this.props.user.lastIndexOf("@"));
+      var domain = this.props.user.substring(this.props.user.lastIndexOf("@") + 1);
+      var domainName = (name + domain).substring(0, (name + domain).lastIndexOf("."));
+      firebase.database().ref('/purchase/' + domainName).push().set({
+        purchase: this.state.cosProduse,
+        date: moment(new Date()).format("LLLL")
+      });
+      this.setState({ cosProduse: [] });
+      message.success('Purchase complete');
+      this.onClose()
+    } else {
+      message.error('Only authenticated users can purchase items. Log in or create account');
+    }
   }
 
   produseRezultate = () => {
@@ -113,6 +124,22 @@ class EcommerceApp extends React.Component {
     this.produseRezultate();
   };
 
+  showModal1 = () => {
+    this.setState({ modalVisible: true });
+  };
+
+  handleOk = e => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
+  handleCancel = e => {
+    this.setState({
+      modalVisible: false,
+    });
+  };
+
   render() {
     function callback(key) {
     }
@@ -121,7 +148,7 @@ class EcommerceApp extends React.Component {
     var content = (
       <div>
         {loggedIn === "true" &&
-          <div style={{ maxWidth: '300px' }}>
+          <div style={{ maxWidth: '200px' }}>
             <Row justify="space-around" align="middle">
               <Col xs={{ span: 16 }} lg={{ span: 6 }}>
                 <Tabs defaultActiveKey="1" onChange={callback}>
@@ -137,8 +164,12 @@ class EcommerceApp extends React.Component {
           </div>
         }
         {loggedIn !== "true" &&
-          <div style={{ padding: 10 }}>
-            <b>Welcome {this.props.user}</b><br /><br /><br /><br />
+          <div style={{ maxWidth: '200px' }}>
+            <span>You are logged in as {this.props.user}</span><br />
+            <Button type="primary" onClick={this.showModal1}>
+              Open Purchase history
+            </Button>
+            <br /><br /><br />
             <Button type='primary' onClick={() => { firebase.auth().signOut() }}>Sign out</Button>
           </div>
         }
@@ -150,60 +181,70 @@ class EcommerceApp extends React.Component {
     const { Header, Footer, Content } = Layout;
     const data = this.state.cosProduse
     return (
-      <Layout>
-        <Header className="header">
-          <span onClick={this.showDrawer}>
-            <Numar cosProduse={this.state.cosProduse} />
-          </span>
-          <span style={{ marginLeft: 20 }}>
-            <Popover content={content} placement="bottomLeft" trigger="click">
-              <IconFont type="icon-tab_login" style={{ fontSize: '28px' }} />
-            </Popover>
-          </span>
-        </Header>
-        <Content className="content">
-          <div className="filtru">
-            <Filtru handleSortare={this.handleSortare} />
-          </div>
-          <br />
-          <Produse
-            produse={this.state.produseRezultate}
-            handleAdauga={this.handleAdauga}
-          />
-        </Content>
-        <Footer className="footer">
-          <a className="github-button" href="https://github.com/ionutpantazi" data-color-scheme="no-preference: light; light: light; dark: light;" data-size="large" data-show-count="true" aria-label="Follow @ionutpantazi on GitHub">Follow @ionutpantazi</a>
-        </Footer>
-        <Drawer
-          title="Cosul de cumparaturi"
-          width={260}
-          placement="right"
-          closable={true}
-          onClose={this.onClose}
-          visible={this.state.visible}
-          footer={
-            <div>
-              <div style={{ float: 'left' }}>
-                Total de plata: {(Math.round(data.reduce((a, c) => (a + c.pret * c.totalProduse), 0) * 100) / 100).toFixed(2)} lei
-              </div>
-              <div style={{ float: 'right' }}>
-                <Button disabled={this.state.cosProduse == 0}
-                  onClick={this.handlePlateste} type="primary">
-                  Plateste
-                </Button>
-              </div>
+      <div>
+        <Layout>
+          <Header className="header">
+            <span onClick={this.showDrawer}>
+              <Numar cosProduse={this.state.cosProduse} />
+            </span>
+            <span style={{ marginLeft: 20 }}>
+              <Popover content={content} placement="bottomLeft" trigger="hover">
+                <IconFont type="icon-tab_login" style={{ fontSize: '28px' }} />
+              </Popover>
+            </span>
+          </Header>
+          <Content className="content">
+            <div className="filtru">
+              <Filtru handleSortare={this.handleSortare} />
             </div>
-          }
-        >
-          <Cos
-            cosProduse={this.state.cosProduse}
-            handleSterge={this.handleSterge}
-            handlePlus={this.handlePlus}
-            handleMinus={this.handleMinus}
-            handlePlateste={this.handlePlateste}
-          />
-        </Drawer>
-      </Layout>
+            <br />
+            <Produse
+              produse={this.state.produseRezultate}
+              handleAdauga={this.handleAdauga}
+            />
+          </Content>
+          <Footer className="footer">
+            <iframe src="https://ghbtns.com/github-btn.html?user=ionutpantazi&type=follow&count=true" frameborder="0" scrolling="0" width="170px" height="20px"></iframe>
+          </Footer>
+          <Drawer
+            title="Shopping cart"
+            width={260}
+            placement="right"
+            closable={true}
+            onClose={this.onClose}
+            visible={this.state.visible}
+            footer={
+              <div>
+                <div style={{ float: 'left' }}>
+                  Total: {(Math.round(data.reduce((a, c) => (a + c.pret * c.totalProduse), 0) * 100) / 100).toFixed(2)} <b>$</b>
+                </div>
+                <div style={{ float: 'right' }}>
+                  <Button disabled={this.state.cosProduse == 0}
+                    onClick={this.handlePlateste} type="primary">
+                    Purchase
+                </Button>
+                </div>
+              </div>
+            }
+          >
+            <Cos
+              cosProduse={this.state.cosProduse}
+              handleSterge={this.handleSterge}
+              handlePlus={this.handlePlus}
+              handleMinus={this.handleMinus}
+              handlePlateste={this.handlePlateste}
+            />
+          </Drawer>
+          <Modal
+            title="Purchase history"
+            visible={this.state.modalVisible}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+          >
+            <ModalContent user={this.props.user} />
+          </Modal>
+        </Layout>
+      </div>
     )
   }
 }
