@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import firebase from "firebase/app";
 
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button , message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 
@@ -58,9 +58,9 @@ const Register = () => {
                 var errorCode = error.code;
                 var errorMessage = error.message;
                 if (errorCode == 'auth/weak-password') {
-                  alert('The password is too weak.');
+                  message.error('The password is too weak.')
                 } else {
-                  alert(errorMessage);
+                  message.error(errorMessage)
                 }
                 console.log(error);
               });

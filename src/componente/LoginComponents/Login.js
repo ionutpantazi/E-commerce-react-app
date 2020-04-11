@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import firebase from "firebase/app";
 
-import { Form, Input, Button, Tooltip , Row, Col } from 'antd';
+import { Form, Input, Button, Tooltip , Row, Col , message } from 'antd';
 import { UserOutlined, LockOutlined, createFromIconfontCN } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 
@@ -59,16 +59,16 @@ const Register = () => {
                   // Handle Errors here.
                   var errorCode = error.code;
                   if (errorCode === 'auth/invalid-email') {
-                    alert('Email address is not valid');
+                    message.error('Email address is not valid')
                   }
                   if (errorCode === 'auth/user-disabled') {
-                    alert('The user corresponding to the given email has been disabled');
+                    message.error('The user corresponding to the given email has been disabled')
                   }
                   if (errorCode === 'auth/user-not-found') {
-                    alert('There is no user corresponding to the given email');
+                    message.error('There is no user corresponding to the given email')
                   }
                   if (errorCode === 'auth/wrong-password') {
-                    alert('The password is invalid for the given email, or the account corresponding to the email does not have a password set');
+                    message.error('The password is invalid for the given email, or the account corresponding to the email does not have a password set')
                   }
                   console.log(error);
                 });

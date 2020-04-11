@@ -19,6 +19,7 @@ class Cos extends React.Component {
           <div>
             <Row justify="space-around" align="middle">
               <Card
+              style={{fontSize:"14px"}}
                 hoverable
                 actions={[
                   <PlusCircleOutlined style={{ fontSize: '20px' }} onClick={() => this.props.handlePlus(item)} />,

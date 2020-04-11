@@ -5,12 +5,12 @@ class Numar extends React.Component {
     render() {
         const { cosProduse } = this.props;
         const IconFont = createFromIconfontCN({
-            scriptUrl: '//at.alicdn.com/t/font_1697557_vei6hao6e59.js',
+            scriptUrl: '//at.alicdn.com/t/font_1697557_4fog8sw7kul.js',
           });
         return (
             <span>
                 <Badge count={cosProduse.length}> 
-                    <IconFont type="icon-Shoppingcartfinancebusiness" style={{ fontSize: '30px' }}/>
+                    <IconFont type="icon-cart-actived" className="icons"/>
                 </Badge>
             </span>
         )

@@ -29,22 +29,17 @@ class ModalContent extends React.Component {
                   <Collapse>
                     <Panel header={val.date} key={val.date} >
                       <div>
-                        <table style={{ width: "100%" }}>
+                        <div style={{fontSize:12}}>
+                          <span><i>ionutpantazi-ecommerce.firebaseapp.com</i></span><br></br>
+                          <span style={{ float: 'right' }}><i>{this.props.user}</i></span>
+                          <span><i>github @ionutpantazi</i></span>
+                        </div>
+                        <table className="ModalTable">
                           <tbody>
-                          <tr style={{ fontSize: '12px' }}>
-                            <td><i>ionutpantazi-ecommerce.firebaseapp.com</i></td>
-                            <td style={{ textAlign: 'right' }}><i>{this.props.user}</i></td>
-                          </tr>
-                          <tr style={{ fontSize: '12px' }}>
-                            <td><i>github @ionutpantazi</i></td>
-                          </tr>
-                          <tr></tr>
-                          <table className="ModalTable">
-                            <tbody>
                             <tr>
-                              <th style={{ width: "20%" }}>Quantity</th>
-                              <th style={{ width: "60%" }}>Product Name</th>
-                              <th style={{ width: "40%" }}>Total price</th>
+                              <th>Quantity</th>
+                              <th>Product Name</th>
+                              <th>Total price</th>
                             </tr>
                             {val.purchase.map((x) => (
                               <tr>
@@ -53,15 +48,9 @@ class ModalContent extends React.Component {
                                 <td>{(Math.round(x.pret * x.totalProduse * 100) / 100).toFixed(2)} $</td>
                               </tr>
                             ))}
-                            </tbody>
-                          </table>
-                          <tr></tr>
-                          <tr>
-                            <td></td>
-                            <td style={{ textAlign: 'right' }}><b>Total paid: {val.purchase.reduce((a, c) => (a + c.pret * c.totalProduse), 0)} $</b></td>
-                          </tr> 
-                          </tbody>  
+                          </tbody>
                         </table>
+                        <span style={{ float: 'right' }}><b>Total paid: {val.purchase.reduce((a, c) => (a + c.pret * c.totalProduse), 0)} $</b></span>
                       </div>
                     </Panel>
                   </Collapse>

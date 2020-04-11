@@ -1,16 +1,15 @@
 import React from 'react';
-import { Row, Col, Card, Tooltip, Modal, Layout, Rate } from 'antd';
-import { createFromIconfontCN } from '@ant-design/icons';
+import { Row, Col, Modal, Layout, Rate } from 'antd';
 class Produse extends React.Component {
   state = { visible: false, modal: [] };
   showModal = (produs) => {
-    this.setState({ 
-      visible: true , 
+    this.setState({
+      visible: true,
       modalImagine: produs.imagine,
-      modalDescriere: produs.descriere, 
+      modalDescriere: produs.descriere,
       modalNume: produs.nume,
-      modalRating: produs.rating, 
-      modalData: produs.data 
+      modalRating: produs.rating,
+      modalData: produs.data
     });
   }
   handleCancel = e => {
@@ -21,36 +20,18 @@ class Produse extends React.Component {
   render() {
     const { Footer } = Layout;
     const { modalImagine, modalDescriere, modalNume, modalRating, modalData } = this.state
-    const { Meta } = Card;
-    const IconFont = createFromIconfontCN({
-      scriptUrl: '//at.alicdn.com/t/font_1697557_irzp4mqx6t8.js',
-    });
     const listaProduse = this.props.produse.map(produs => (
       <Col xs={{ span: 12 }} lg={{ span: 8 }} >
-        <Card
-          size="small"
-          hoverable
-          cover={
-            <img
-              src={produs.imagine}
-              alt={produs.nume}
-              style={{ width: '80%', margin: '20px' }}
-            />
-          }
-          actions={[
-            <Tooltip title="Add to cart" trigger="hover , click">
-              <div className="responsive"><IconFont type="icon-iconaddtocart" onClick={() => this.props.handleAdauga(produs)} /></div>
-            </Tooltip>,
-            <Tooltip title="Details" trigger="hover , click">
-              <div className="responsive"><IconFont type="icon-tariffdetails" onClick={() => this.showModal(produs)} /></div>
-            </Tooltip>
-          ]}
-        >
-          <Meta
-            title={produs.nume}
-            description={produs.pret + ' $'}
+        <div className = "card">
+          <img
+            src={produs.imagine}
+            alt={produs.nume}
+            style={{ width: '80%', margin: '20px' }}
           />
-        </Card>
+          <h2 onClick={() => this.showModal(produs)} className = "name">{produs.nume}</h2>
+          <p className = "price">{produs.pret + ' $'}</p>
+          <p><button onClick={() => this.props.handleAdauga(produs)}>Add to Cart</button></p>
+        </div>
       </Col>
     ))
     return (

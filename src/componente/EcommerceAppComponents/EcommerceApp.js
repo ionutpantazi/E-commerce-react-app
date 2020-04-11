@@ -1,15 +1,10 @@
 import React from "react"
 import firebase from "firebase/app";
-import Produse from "./ListaDeProduse"
 import Cos from "./Cos"
-import Numar from "./NumarCos";
-import Filtru from "./Filtru";
-import Register from "../LoginComponents/Register";
-import Login from "../LoginComponents/Login";
-import ModalContent from "./ModalContent";
-import { Drawer, message, Layout, Button, Popover, Row, Col, Tabs, Modal } from 'antd';
+import Header from "./Header";
+import Content from "./Content";
+import { Drawer, message, Layout, Button } from 'antd';
 import "antd/dist/antd.css";
-import { createFromIconfontCN } from '@ant-design/icons';
 import './EcommerceApp.css';
 import moment from 'moment';
 
@@ -22,7 +17,6 @@ class EcommerceApp extends React.Component {
       visible: false,
       sortat: "nume",
       produseRezultate: [],
-      modalVisible: false
     }
   }
 
@@ -124,87 +118,26 @@ class EcommerceApp extends React.Component {
     this.produseRezultate();
   };
 
-  showModal1 = () => {
-    this.setState({ modalVisible: true });
-  };
-
-  handleOk = e => {
-    this.setState({
-      modalVisible: false,
-    });
-  };
-
-  handleCancel = e => {
-    this.setState({
-      modalVisible: false,
-    });
-  };
-
   render() {
-    function callback(key) {
-    }
-    const { TabPane } = Tabs;
-    var loggedIn = this.props.user
-    var content = (
-      <div>
-        {loggedIn === "true" &&
-          <div style={{ maxWidth: '200px' }}>
-            <Row justify="space-around" align="middle">
-              <Col xs={{ span: 16 }} lg={{ span: 6 }}>
-                <Tabs defaultActiveKey="1" onChange={callback}>
-                  <TabPane tab="Login" key="1">
-                    <Login />
-                  </TabPane>
-                  <TabPane tab="Register" key="2">
-                    <Register />
-                  </TabPane>
-                </Tabs>
-              </Col>
-            </Row>
-          </div>
-        }
-        {loggedIn !== "true" &&
-          <div style={{ maxWidth: '200px' }}>
-            <span>You are logged in as {this.props.user}</span><br />
-            <Button type="primary" onClick={this.showModal1}>
-              Open Purchase history
-            </Button>
-            <br /><br /><br />
-            <Button type='primary' onClick={() => { firebase.auth().signOut() }}>Sign out</Button>
-          </div>
-        }
-      </div>
-    )
-    const IconFont = createFromIconfontCN({
-      scriptUrl: '//at.alicdn.com/t/font_1697557_t92s5qj61g.js',
-    });
-    const { Header, Footer, Content } = Layout;
+ 
+    const { Footer } = Layout;
     const data = this.state.cosProduse
     return (
       <div>
         <Layout>
-          <Header className="header">
-            <span onClick={this.showDrawer}>
-              <Numar cosProduse={this.state.cosProduse} />
-            </span>
-            <span style={{ marginLeft: 20 }}>
-              <Popover content={content} placement="bottomLeft" trigger="hover">
-                <IconFont type="icon-tab_login" style={{ fontSize: '28px' }} />
-              </Popover>
-            </span>
-          </Header>
-          <Content className="content">
-            <div className="filtru">
-              <Filtru handleSortare={this.handleSortare} />
-            </div>
-            <br />
-            <Produse
-              produse={this.state.produseRezultate}
-              handleAdauga={this.handleAdauga}
-            />
-          </Content>
+          <Header
+            loggedIn={this.props.loggedIn}
+            cosProduse={this.state.cosProduse}
+            user={this.props.user}
+            showDrawer={this.showDrawer}
+          />
+          <Content
+            handleSortare={this.handleSortare}
+            produse={this.state.produseRezultate}
+            handleAdauga={this.handleAdauga}
+          />
           <Footer className="footer">
-            <iframe src="https://ghbtns.com/github-btn.html?user=ionutpantazi&type=follow&count=true" frameborder="0" scrolling="0" width="170px" height="20px"></iframe>
+            <iframe src="https://ghbtns.com/github-btn.html?user=ionutpantazi&type=follow&count=true" frameBorder="0" scrolling="0" width="170px" height="20px"></iframe>
           </Footer>
           <Drawer
             title="Shopping cart"
@@ -235,14 +168,7 @@ class EcommerceApp extends React.Component {
               handlePlateste={this.handlePlateste}
             />
           </Drawer>
-          <Modal
-            title="Purchase history"
-            visible={this.state.modalVisible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-          >
-            <ModalContent user={this.props.user} />
-          </Modal>
+          
         </Layout>
       </div>
     )
